@@ -1,0 +1,83 @@
+FL can be strong or weak, and quiet, normal, or loud.
+
+weak and quiet								weak and normal									weak and loud
+Tafadzwa negotiates with FL					Tafadzwa negotiates with FL						Tafadzwa refuses to negotiate with FL
+and requires 450,000 credits				and requires 500,000 credits					and requires them to come back another day to try again
+If FL was loud before, 500,000				If FL was loud before, 550,000
+credits are required						credits are required
+
+strong and quiet							strong and normal								strong and loud
+Tafadzwa negotiates with FL					Tafadzwa negotiates with FL						Tafadzwa negotiates with FL and requires
+and requires 350,000 credits				and requires 400,000 credits					300,000 credits
+
+
+Should I just have a branch for strong/weak; a goto to start quiet, normal, or loud; and then the rest of the choices don't matter? With a repeat of the weak/normal and weak/quiet convo 
+chains for if FL was loud initially? And if FL is loud again they just fail? Should they have more than one stike? Maybe each time they're loud it's +25k to the bribe and if they're loud
+a third time then they fail?
+
+
+
+label weak
+	choice 
+		`	"Is Captain Tafadzwa here? I have something for them."`
+			goto normal
+		`	(whisper) "I'm looking for Captain Tafadzwa. Can you point them out to me?"`
+			goto whisper
+		`	(loudly) "I've been told Captain Tafadzwa frequents this establishment. Is that correct?"`
+			goto loudly
+	label normal
+		`The bartender leans forward. Quietly they say, "How can I help you?"`
+		choice
+			`	"I said, I'm looking for Tafadzwa Andresen. I need to talk to them."`
+				goto why
+			`	"I'm here on behalf of the Syndicate to do business with Captain Tafadzwa Andresen`
+				goto Syndicate
+	label why
+		`The bartender looks annoyed. "What is your business with Tafadzwa?"`
+		choice
+			`	"I'm here to talk to them on behalf of the Syndicate."`
+				goto Syndicate
+			`	"It's a secret."`
+				goto secret
+	label secret
+		`	"I'm sorry, if you won't tell me your business I can't help you.`
+		choice
+			`	"Okay, okay!" I'm here to bribe them on behalf of the Syndicate."`
+				goto Syndicate
+			`	"I guess I'll just have to come back tomorrow."`
+				goto tomorrow #I'll probably need to make a helper mission to account for the various tomorrow situations...
+	label Syndicate
+		`	"For the Syndicate you say? Come with me."`
+		choice 
+			`(follow them).`
+				goto follow
+			`	"Sorry, I'm not following you anywhere. I'll meet Captain Tafadzwa in a public place or not at all."`
+				goto public
+	label follow
+		`	As you follow the bartender through a curtain and into a narrow hallway lined with stacks and stacks of metal boxes gleaming in the harsh overhead light you wonder if this was the best decision. `
+		`	The hallway takes several turns and you do your best to remmeber which way you came. The lights slowly get dimmer and the shelves of boxes are replaced with worn stone. On and on you go, the air becomes cool and dammp, condensation dripping off the walls.`
+		`	Eventually the bartender stops at a door which they open for you. Stepping inside you see there is no one else. You whip around to see the bartender closing the door behind them.`
+		choice
+			`	"What's going on?"`
+				goto question
+			`(whip out your gun and try to fight your way out).`
+				goto death
+	label question
+		`	"I'm Captain Tafadzwa. I assume the Syndicate sent you here to bribe me?`
+		choice
+			`	"Correct."`
+			`	"That's true."`
+	`	"Very well," they say. "How many credits did they give you this time?"`
+	`	"500000," you reply."`
+	`	"This is... acceptable. Hand them over."`
+	`	You hand over the credit chips you got from the Syndicated Systems officer. Then Captain Tafadzwa leads you through the winding corridors, taking different turns. You eventually step out into the spaceport and Captain Tafadzwa leaves you behind.`
+	`	"Thanks for the credits," they say as they walk away."`
+	`	Now you need to head to <destination> and confirm that you've successfully bribed Captain Tafadzwa.`	
+	label death
+		`The bartender is quicker on the draw. They shoot you in the stomach and then again in the head.`
+			kill
+	label public
+	label tomorrow
+	label whisper
+	label loudly
+		

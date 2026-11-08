@@ -1,0 +1,1078 @@
+#Copyright (c) 2014 by Michael Zahniser
+#
+#Endless Sky is free software: you can redistribute it and/or modify it under the
+#terms of the GNU General Public License as published by the Free Software
+#Foundation, either version 3 of the License, or (at your option) any later version.
+#
+#Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+#WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+#PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License along with
+#this program. If not, see <a href="https://www.gnu.org/licenses/">&gthttps://www.gnu.org/licenses/&lt</a>.
+#
+
+
+################	HELP A MINER	################
+
+
+ship "Miner Timer Ship"
+	attributes
+		category "Game Mechanics"
+		"heat dissipation" 1
+		"hull" 2
+		"hull repair rate" .001
+		"mass" 100
+		"drag" 5
+		"automaton" 1
+		"thrust" 10
+		"turn" 600
+	outfits
+		"Timer Weapon"
+	gun 0 0
+
+outfit "Timer Weapon"
+	category "Guns"
+	thumbnail "outfit/unknown"
+	"gun ports" -1
+	weapon
+		"velocity" 10
+		"lifetime" 2
+		"reload" 100
+		"blast radius" 10
+		"split range" 200
+		"submunition" "Timer Submunition"
+
+outfit "Timer Submunition"
+	weapon
+		"lifetime" 20
+		"trigger radius" 200
+		"blast radius" 20
+		"hull damage" .15
+		"no damage scaling"
+
+#Derpy mentioned in their testing 6 years ago(?) that the timing was inconsistent with the timer ship. Is there better technology now for this sort of thing?
+
+mission "Core Miner 0"
+	minor
+	name "Miner Protection"
+	description "Help Zahir in the Core by distracting or disabling pirates while he mines, then accompany him to <destination>"
+	source 
+		government "Syndicate"
+		not planet "Sunracer"
+	waypoint "Mirfak"
+	destination Moonshake
+	to offer
+		random < 40
+# does this need to be before the war starts? I feel like it's okay if the war has started, the player can still pick a side, but maybe there's other context I'm not familiar with...
+	on offer
+		log "Minor People" "Zahir Gilmour" `A middle aged miner who helped you get your foot in the door with the Syndicate.`
+		conversation
+			`As you leave the <ship>, you notice a captain hauling large crates out the back of his beat up interceptor. As you watch, the captain stumbles knocking over a crate and revealing large amounts of copper.`
+			choice
+				`	(approach and help them.)`
+				`	(ignore them.)`
+					decline
+			`	"Thanks for your help," the captain says as you assist them with the knocked over crate of copper.`
+			choice
+				`	"Your ship looks awfully beat up. What happened to it?"`
+					goto beaten
+				`	"No problem."`
+					goto request
+			label beaten
+			` 	"I had a run in with a couple pirates while mining. They tend to lurk around systems where there aren't a lot of other ships."`
+			choice
+				`	"Why would you mine in a system that is more likely to have pirates?"`
+					goto risky
+				`	"Thanks for the tip."`
+					goto request
+			label risky
+			`	"It can be hard to get the minerals you want when you're competing with lots of other captains, and certain minerals are only readily available in certain systems." The captain pauses.`
+			label request
+			`	"Say, would you want to help me out? If you watch my back while I mine, I'd really appreciate it."`
+			choice 
+				` 	"I'd be happy to help."`
+					accept
+				`	"Sorry, I'm not interested in helping you right now."`
+					decline
+			`	"Thanks again, I'll mark <waypoints> on your map."`
+				
+
+	npc accompany save
+		personality 
+			escort mining timid harvests
+			confusion 20
+		government "Merchant"
+		ship "Hawk" "The Jade Rain"
+		
+	npc disable
+		personality 
+			unconstrained nemesis heroic
+		system "Mirfak"
+		government "Test Dummy"
+		ship "Miner Timer Ship" "Timer"
+		dialog `The merchant captain hails your ship. "I'm all good here. Let's head to <destination> ."`
+	
+	npc
+		personality 
+			nemesis heroic staying
+			confusion 20
+		system "Mirfak"
+		government "Pirate"
+		fleet
+			names "pirate"
+			variant
+				"Sparrow"
+
+	npc
+		personality 
+			nemesis heroic staying
+			confusion 20
+		system "Mirfak"
+		government "Pirate"
+		fleet
+			names "pirate"
+			variant
+				"Sparrow"
+	
+	on visit
+		dialog `You have landed on <planet> but Zahir is either not done mining, or is not in the system with you.`
+	on complete
+		payment 35000 400
+		log `Defended an asteroid miner named Zahir while he mined in a dangerous system. Asteroid mining seems like a good way to make credits in a small ship.`
+		conversation
+			`	Zahir hands you <payment>. "Thanks Captain, maybe I'll see you around sometime, eh?"`
+			`	As you turn to go the Captain stops you.`
+			`	"Sorry, where are my manners? My name is Zahir Gilmour. What's yours?"`
+			`	" <first> <last> ," you respond.`
+			`	"Well I was glad to have you around Captain <last> . Like I said, see you around."`
+			
+			
+mission "Core Miner 1"
+	name "Mining for Iron"
+	description "Help Zahir mine for iron in Zaurak before accompanying him to Millrace"
+	source
+		government "Syndicate"
+	waypoint "Zaurak"
+	destination Millrace
+	cargo "(reserved)" 10 #new line, needs testing
+	to offer
+		has "Core Miner 0: done"
+		has	"attribute: asteroid scan power" > 0
+	blocked "You can't help Zahir if you don't have enough cargo space. You'll have to free up <tons> of space. Make sure you also have equipment with asteroid scanning."
+	on offer
+		conversation
+			`While wandering through the spaceport, you bump into Zahir, the miner you defended from pirates earlier. "Oh hey Captain <last> how are you?"`
+			choice
+				`	"I'm alright. Yourself?"`
+				`	"I've been better, how are you?"`
+				`	"Great actually. How are you?"`
+			`	"I've been better, but I'm actually wondering if you could help me with something. I have a mining job for 20 tons of iron, but my ship only has 10 tons of cargo space. Could you join me on a mining run to <waypoints> ? You'll need asteroid scanning equipment and 10 tons of cargo space."`	
+			choice
+				`	"Of course. I'll get my ship ready."`
+					accept
+				`	"Sorry, I can't help you right now."`
+					decline
+			
+	npc accompany save
+		personality escort mining timid harvests
+		government "Merchant"
+		ship "Hawk" "The Jade Rain"
+		
+	on visit
+		dialog `You have landed on <planet> , but you either don't have ten tons of iron or you left Zahir behind. Continue mining iron, or wait for Zahir to enter the system.`
+	on complete
+		outfit "Iron" -10
+		payment 36000
+		dialog `Captain Gilmour and his crew unload 10 tons of iron from your ship before paying you <payment> . "Thanks again, Captain. I appreciate the help."`
+		
+
+
+mission "Core Miner 2"
+	name "Prospecting in the Core"
+	landing
+	description "Scout a few systems for Zahir Gilmour to see if they're worth mining in then meet him at <destination> so he can read your ship's scanner logs."
+	source
+		Government "Syndicate"
+	waypoint "Oblate"
+	waypoint "Moktar"
+	waypoint "Cardax"
+	waypoint "Volax"
+	destination "Foundry"
+	to offer
+		has "Core Miner 1: done"
+	on offer
+		dialog `Upon landing, you receive a message from Zahir Gilmour, the miner you met in the Core. "Hello Captain, I was wondering if you'd be able to scout a few uninhabited systems for me so I can know if they're worth mining in. I'll mark them on your map. Meet me on <destination> when you're finished and I'll pay you <payment>."`
+		event "Elise Alone" 10
+		payment 60000
+		dialog
+			`Zahir analyzes the <ship>'s scanner logs to see if any are worth mining in.`
+			`"Moktar and Cardax look pretty sparse. Volax doesn't have any asteroids worth mining. Oblate seems like best system to mine in out of these, but not much better than some safer systems. Well, that was a bust, but thanks for taking a look for me. Here's the <payment>. "`
+
+
+
+event "Elise Alone"
+
+
+
+mission "Core Miner 3" # Derpy had a comment here about needing to add a branch to FW reconciliation if this mission is to be merged. I'm changing things about the character you save so I'm not sure if that will still be necessary.
+	landing
+	name "Saving the day"
+	description "Repair the <npc> in the Durax system and escort them safely back to <destination>."
+	source
+		near "Durax" 1 6
+	destination "Foundry"
+	waypoint "Durax"
+	source
+		government "Syndicate" "Republic"
+	payment 100000
+	to offer
+		has "event: Elise Alone"
+		has "Core Miner 3: done"
+	on offer
+		dialog
+			`You receive a message from Zahir. "Captain <last>, I really need your help. It's very important. A dear friend of mine is stranded in Durax. You're the closest person to them that can help. Please go straight to Durax and then escort them to <destination> after repairing their ship."`
+# note to self, make sure to add some dialog for when you repair Elise's ship...
+	on assist 
+		dialog
+			`	Elise's ship is covered in burns that don't look like other weapon damage you've seen. Elise thanks you profusely after you repair her ship. "I really appreciate your help Captain, if it's not too much trouble, would you escort me to <destination>? Thanks again."`
+	on visit 
+		dialog
+			`You have landed at <destination> but Elise's ship isn't in the system yet. Takeoff again and wait for her to arrive.`
+	on complete
+		dialog
+			`	Zahir is waiting at the spaceport when you arrive. Elise runs out of her ship to him. Both beaming they stop a couple feet apart and give each other a serious nod. Turning to you, Zahir says "I can't tell you how much I appreicate you saving my friend. Even so, here are some credits for your help." He hands you <payment> before heading with Elise into the spaceport.`
+
+	npc 
+		assist accompany save 
+		personality 
+			timid
+			confusion 40
+		system "Durax"
+		government "Merchant"
+		ship "Argosy" "SETI" #should I make this a custom 'science' variant?
+
+################	  SYNDICATE COLONIZATION	 ################
+			
+#in data/human/campaign missions line 1156 there's a TODO comment about making Syndicate freighter fleets, when this is complete, the following missions in this section could probably use those fleets
+#there will need to be something added to the FW missions at some point to make them mutually exclusive with the FW campaign...	
+mission "Syndicate Colonization 0" # this will need to mesh with the mid-war changes already merged with the Syndicate taking up production of some outfitters. Check dates on those changes.
+	minor
+	name "Syndicated Systems to Tundra"
+	description `Escort a freighter to <stopovers> where they will pick up materials to help set up a Syndicate outfitter at <destination>. Payment is <payment>.`
+	source
+		government "Syndicate"
+		near "Foundry" 3
+	stopover "Foundry"
+	deadline
+	#should this repeat so that FL has extra chances to do these missions?
+	destination Tundra
+	to offer
+		"combat rating" > 40
+		random < 40
+		has
+			not
+				"chosen sides" #is this the correct formatting?
+	on offer
+		conversation
+			`You are approached by a man in a Syndicated Systems uniform who asks if you'd be willing to help set up an outfitter on <destination> by escorting a freighter full of materials. "This shipment is just a single freigher so we don't expect you to encounter any trouble," he says.`
+			choice
+				`	"Sure, I can do that."`
+					accept
+				`	"Sorry, I can't help you right now."`
+					defer 
+	
+	npc accompany save
+		government "Merchant"
+		personality 
+			timid escort
+			confusion 40
+			names "civilian"
+			variant
+				"freighter" 1
+				
+	npc 
+		government "Pirate"
+		personality 
+			heroic nemesis staying
+			confusion 20
+		system "???" #need to pick a system for this...
+		fleet 
+			names "pirate"
+			variant 
+				"hawk"
+
+		
+	on stopover
+		dialog `You arrive at the pickup location on Foundry and the freighter is loaded up. It seems like this freighter won't have any outfits in it, just general equipment for the outfitter itself.`
+	on visit
+		dialog `You have reached <planet>, but you're missing something! Either you haven't visited <stopovers>, or you left the freigher behind.`
+	on complete
+		"Syndicate Convoy" ++
+		payment 200000
+		dialog
+			`A Syndicated Systems representative greets you when you arrive at <planet> with the freighter. He hands you <payment> and thanks you for helping the Syndicate reach new markets. "You're helping bring prosperity to this corner of the galaxy. We'll make sure to contact you in the future should we need your help again."`
+			
+			
+			
+			
+mission "Syndicate Colonization 1"
+	minor 
+	name "Syndicated Systems to Tundra: part 2"
+	description `Escort a couple freighters to <stopovers> where they will pick up materials to set up a Syndicate outfitter at <destination>. Payment is <payment>.`
+	source 
+		government "Syndicate" 
+		near "Foundry" 3
+	stopover "Foundry" #should this stopover be at a different planet/system?
+	deadline
+	destination Tundra
+	to offer
+		has "Syndicate Colonization 1: done"
+		"combat rating" > 45
+		random < 40 + "Syndicate Convoy" * 5
+	on offer
+		conversation
+			`You are approached by a man in a Syndicated Systems uniform who asks if you'd be willing to help set up an outfitter on <destination> by escorting a freighter full of materials. "This shipment is just a couple freighers so we don't expect you to encounter too much trouble," he says.`
+			choice
+				`	"Sure, I can do that."`
+					accept
+				`	"Sorry, I can't help you right now."`
+					decline
+
+#this mission shouldn't repeat, but should it offer even if rejected by FL to continue to give them the chance to participate? (this idea also just applies to all the missions in this chain)...	
+	
+	on stopover
+		dialog `You arrive at the pickup location on <stopovers> and the freighters are loaded up. You get read to head to <destination>.`
+	on visit
+		dialog `You have reached <planet>, but you're missing something! Either you haven't visited <stopovers>, or you left the freighters behind.`
+	on complete
+		"Syndicate Convoy" ++
+		payment 250000
+		dialog
+			`A Syndicated Systems representative greets you when you arrive at <planet> with the freighters. He hands you <payment> and thanks you for helping the Syndicate reach new markets. "You're helping bring prosperity to this corner of the galaxy. We'll make sure to contact you in the future should we need your help again."`
+
+	npc accompany save
+		government "Merchant"
+		personality 
+			timid escort
+			confusion 40
+			names "civilian"
+			variant
+				"freighter" 2
+				
+	npc 
+		government "Pirate"
+		personality 
+			heroic nemesis staying
+			confusion 20
+		system "???" #need to pick a system for this...
+		fleet 
+			names "pirate"
+			variant 
+				"sparrow" 3
+
+			
+ event "Syndicated Systems Expansion 1"
+	planet "Tundra"
+		add outfitter "Syndicate Basics (outfitter)"
+		
+mission "Syndicate Colonization 2" #have the Syndicate 'pre-authorize' FL to use up to a certain amount of money. Then FL can negotiate with the pirates and whatever is leftover FL can keep OR they might be forced to pay more and lose money on the job.
+	minor 
+	name "Bribe Pirates for the Syndicate"
+	description `Help the Syndicate persuade some local pirates to stop raiding their ships by bribing the pirates on <stopovers>. Then report to "Syndicate leadership" at <destination>.`
+	source
+		government "Syndicate"
+	stopover #Pirate planet
+	destination #starting system (unless this should send FL to the 'anti-Pirate' world of the Syndicate?) 
+	deadline 3
+	to offer
+		has "Syndicate Colonization 1: done"
+		combat rating > 50
+		random < 40 + "Syndicate Convoy" * 5
+	clearance "(message about being allowed to land)" #look at some of the FW 'Alondo gets you permission to land' missions for guidance
+	payment 300000
+	on offer
+		conversation
+			`You are approached by a man in a Syndicated Systems uniform. "Captain <last>, we've appreciated your help with the outfitter convoys. We'd like your help with them in another way. Pirates in from <destination> have been harassing other convoys. We'd like you to bring them a bribe to leave the convoys alone. We'd be willing to offer you <payment> for taking on a job like this. You'll need to find Tafadzwa Andresen who is known to frequent a local pub called the 'Rottenmouth Viper'. If you accept, we'll give you 500000 credits and whatever you don't spend on the bribe you can keep. What do you say?"`
+			choice 
+				`	"Sure, I'd be happy to help."`
+					accept
+				`	"Sorry, that's too risky for me."`
+					decline
+	on accept 
+		payment 500000
+	on stopover
+# for this conversation, I imagine the pirate can react differently based on FL's combat rating.
+# if FL just barely clears the combat rating to get offered the mission, the pirate should be more aggresive
+# and if FL has a much higher combat rating the pirate should be a bit more... maybe not submissive, but at least respectful.
+		conversation
+			`	You make your way to the "Rottenmouth Viper". It's a suprisingly clean establishment considering the name and planet. The patrons are all clean and well dressed but they watch you carefully over their drinks as you approach the bar. The bartender is polishing a fragile looking glass and looks you up and down as you approach.`
+			branch strong
+				has combat rating > 150
+			branch weak
+				has combat rating <= 150
+			label weak
+				choice
+					`	"Is Captain Tafadzwa here? I have something for them."`
+					`	(whisper) "I'm looking for Captain Tafadzwa. Can you point them out to me?"`
+						goto whisper
+					`	(loudly) "I've been told Captain Tafadzwa frequents this establishment. Is that correct?"`
+						goto loudly
+				`	The bartender leans forward. Quietly they say, "How can I help you?"`
+				choice
+					`	"I said, I'm looking for Tafadzwa Andresen. I need to talk to them."`
+					`	"I'm here on behalf of the Syndicate to do business with Captain Tafadzwa Andresen`
+				#some third dialog option where FL can indicate that they know "PIRATE NAME" is the bartender. I want to do this without reavling that too clearly in the dialog for players who don't pick up on that.
+				`	The bartender looks at you dirisively and says "They're not here right now. Come back tomorrow."`
+				`	You return to your ship disappointed. You think about how you might take a different approach tomorrow. If you don't find this pirate in time, the Syndicate might accuse you of stealing the credits they forwarded you for the bribe.`
+				#do I need a (decline) here or something? 
+				label whisper
+				label loudly
+				
+			label strong
+				choice 
+					`	"Is Captain Tafadzwa here? I have something for them."`
+					`	(whisper) "I'm looking for Captain Tafadzwa. Can you point me to them?"`
+						goto whisper strong
+					`	(loudly) "I've been told Captain Tafadzwa frequents this establishment. Is that correct?"`
+						goto loudly	strong	
+				`	The bartender leans forward. I'm Captain Andresen. Go through that curtain next to the bar and I'll meet you in the back shortly.`
+				`	Stepping through the curtain you find yourself in a narrow storage room with shelves up to the ceiling and a door to the kitchen/bar area. The bartender, apparently Tafadzwa Andresen themselves, steps in shortly. "You're from the Syndicate?" they ask.`
+				choice
+					`	"I am."`
+					`	"That's correct."`
+					`	"No."`
+						goto foolish
+				`	"Very well. I'll accept 600000 credits to leave them alone for awhile.`
+				choice
+					`	"That's way too much! 200000."`
+						goto lowball a
+					`	"I'm sorry. 250000, is what I'll offer you."`
+						goto lowball b
+					`	"That's too much. 300000."`
+						goto middle
+					`	"The most I can do is 450000."`
+						goto overpay
+						
+				label foolish
+					`	"In that case..." Captain Andresen looms close to you, "I don't need to care about your wellbeing." In a blink they've pulled out a knife and stabbed you in the throat. As you lay bleeding on the ground they start to rummage through your pockets for credits or anything else of value.`
+						die
+				label whisper strong
+				
+				label loudly strong
+				
+					
+	on visit
+		dialog
+			`You've reached <destination> but you didn't land on <stopovers> and bribe Tafadzwa Andresen! Go back to <stopovers> and make sure the pirates won't bother the Syndicate anymore.`
+	on fail 
+		dialog
+			`	You've failed to bribe the target pirate in time and the Syndicate is now accusing you of stealing the credits they gave you to bribe Captain Tafadzwa Andresen.`
+			#decrease Syndicate reputation
+			#decrease Republic reputation
+	on complete
+		"Syndicate Convoy" ++
+		payment 300000
+		dialog
+			`A Syndicated Systems representative greets you when you arrive at <destination> and hands you <payment>. "Thank you for taking on this risky mission, we'll let you know if we have more work of this kind for you."`
+			
+			
+mission "Syndicate Colonization 3"
+	minor 
+	name "Syndicated Systems to Heartland"
+		description `Escort a freighter to <stopovers> where they will pick up materials to help set up a Syndicate outfitter at <destination>. Payment is <payment>.`
+	source
+		government "Syndicate"
+		near "Foundry" 3
+	stopover "Foundry"
+	deadline
+	destination Heartland
+	to offer
+		has "Syndicate Colonization 2: done"
+		"combat rating" > 40
+		random < 40 + "Syndicate Convoy" * 5
+	on offer
+		conversation
+			`You are approached by a man in a Syndicated Systems uniform who asks if you'd be willing to help set up an outfitter on <destination> by escorting a freighter full of materials. "This shipment is just a single freigher so we don't expect you to encounter any trouble," he says.`
+			choice
+				`	"Sure, I can do that."`
+					accept
+				`	"Sorry, I can't help you right now."`
+					decline
+	
+	npc accompany save
+		government "Merchant"
+		personality 
+			timid escort
+			confusion 40
+			names "civilian"
+			variant
+				"freighter" 1
+				
+	npc 
+		government "Pirate"
+		personality 
+			heroic nemesis staying
+			confusion 20
+		system "???" #need to pick a system for this...
+		fleet 
+			names "pirate"
+			variant 
+				"modified argosy"
+
+		
+	on stopover
+		dialog `You arrive at the pickup location on Foundry and the freighter is loaded up. It seems like this freighter won't have any outfits in it, just general equipment for the outfitter itself.`
+	on visit
+		dialog `You have reached <planet>, but you're missing something! Either you haven't visited <stopovers>, or you left the freigher behind.`
+	on complete
+		"Syndicate Convoy" ++
+		payment 200000
+		dialog
+			`A Syndicated Systems representative greets you when you arrive at <planet> with the freighter. He hands you <payment> and thanks you for helping the Syndicate reach new markets. "You're helping bring prosperity to this corner of the galaxy. We'll make sure to contact you in the future should we need your help again."`
+
+	
+	
+mission "Syndicate Colonization 4"
+	minor 
+	name "Syndicated Systems to Heartland: part 2"
+	description `Escort a couple freighters to <stopovers> where they will pick up materials to set up a Syndicate outfitter at <destination>. Payment is <payment>.`
+	source 
+		government "Syndicate" 
+		near "Foundry" 3
+	stopover "Foundry" #should this stopover at a different planet/system?
+	deadline
+	destination Heartland
+	to offer
+		has "Syndicate Colonization 3: done"
+		"combat rating" > 60
+		random < 40 + "Syndicate Convoy" * 5
+	on offer
+		conversation
+			`You are approached by a man in a Syndicated Systems uniform who asks if you'd be willing to help set up an outfitter on <destination> by escorting a freighter full of materials. "This shipment is just a couple freighers so we don't expect you to encounter too much trouble," he says.`
+			choice
+				`	"Sure, I can do that."`
+					accept
+				`	"Sorry, I can't help you right now."`
+					decline
+	
+	on stopover
+		dialog `You arrive at the pickup location on <stopovers> and the freighters are loaded up. You get read to head to <destination>.`
+	on visit
+		dialog `You have reached <planet>, but you're missing something! Either you haven't visited <stopovers>, or you left the freighters behind.`
+	on complete
+		"Syndicate Convoy" ++
+		payment 250000
+		dialog
+			`A Syndicated Systems representative greets you when you arrive at <planet> with the freighters. He hands you <payment> and thanks you for helping the Syndicate reach new markets. "You're helping bring prosperity to this corner of the galaxy. We'll make sure to contact you in the future should we need your help again."`
+	
+	npc accompany save
+		government "Merchant"
+		personality 
+			timid escort
+			confusion 40
+			names "civilian"
+			variant
+				"freighter" 2
+				
+	npc 
+		government "Pirate"
+		personality 
+			heroic nemesis staying
+			confusion 20
+		system "???" #need to pick a system for this...
+		fleet 
+			names "pirate"
+			variant 
+				"hawk" 5 
+				
+mission "Syndicate Colonization 5"
+	name "Bribe More Pirates for the Syndicate"
+# baiscally the same mission as before, but for pirates in a different system
+
+
+
+
+mission "Syndicate Colonization 6a"
+	minor 
+	name "Syndicated Systems to New China"
+	description `Escort a several freighters to <stopovers> where they will pick up materials to set up a Syndicate outfitter at <destination>. Payment is <payment>.`
+	source 
+		government "Syndicate" 
+		near "Foundry" 3
+	stopover "Foundry" #should this stopover at a different planet/system?
+	deadline
+	destination New China
+	to offer
+		has "Syndicate Colonization 5: done"
+		has #how do I call 'war started'?
+		"combat rating" > 65
+		random < 40 + "Syndicate Convoy" * 5
+	on offer
+		conversation
+			`You are approached by a man in a Syndicated Systems uniform who asks if you'd be willing to help set up an outfitter on <destination> by escorting several freighters full of materials. "This shipment is just a moderate sized convoy so we expect you to encounter some pirates on the way," he says.`
+			choice
+				`	"Sure, I can' do that."`
+					accept
+				`	"Sorry, I can't help you right now."`
+					decline
+	
+	on stopover
+		dialog `You arrive at the pickup location on <stopovers> and the freighters are loaded up. You get read to head to <destination>.`
+	on visit
+		dialog `You have reached <planet>, but you're missing something! Either you haven't visited <stopovers>, or you left the freighters behind.`
+	on complete
+		"Syndicate Convoy" ++
+		payment 500000
+		dialog
+			`A Syndicated Systems representative greets you when you arrive at <planet> with the freighters. He hands you <payment> and thanks you for helping the Syndicate reach new markets. "You're helping bring prosperity to this corner of the galaxy. We'll make sure to contact you in the future should we need your help again."`
+	
+	npc accompany save
+		government "Merchant"
+		personality 
+			timid escort
+			confusion 40
+			names "civilian"
+			variant
+				"freighter" 4
+				
+	npc 
+		government "Pirate"
+		personality 
+			heroic nemesis staying
+			confusion 20
+		system "???" #need to pick a system for this...
+		fleet 
+			names "pirate"
+			variant 
+				"modified argosy" 2
+	
+	npc
+		government "Pirate"
+		personality
+			heroic nemesis staying
+			confusion 20
+		system "???" #same as above
+		fleet
+			names "pirate"
+			variant
+				"fury" 4
+
+mission "Syndicate Colonization 6b"
+	minor 
+	name "Syndicated Systems to New Wales"
+	description `Escort a several freighters to <stopovers> where they will pick up materials to set up a Syndicate outfitter at <destination>. Payment is <payment>.`
+	source 
+		government "Syndicate" 
+		near "Foundry" 3
+	stopover "Foundry" #should this stopover at a different planet/system?
+	deadline
+	destination New Wales
+	to offer
+		has "Syndicate Colonization 5: done"
+		has #how do I call 'war started'?
+		"combat rating" > 65
+		random < 40 + "Syndicate Convoy" * 5
+	on offer
+		conversation
+			`You are approached by a man in a Syndicated Systems uniform who asks if you'd be willing to help set up an outfitter on <destination> by escorting several freighters full of materials. "This shipment is just a moderate sized convoy so we expect you to encounter some pirates on the way," he says.`
+			choice
+				`	"Sure, I can do that."`
+					accept
+				`	"Sorry, I can't help you right now."`
+					decline
+	
+	on stopover
+		dialog `You arrive at the pickup location on <stopovers> and the freighters are loaded up. You get read to head to <destination>.`
+	on visit
+		dialog `You have reached <planet>, but you're missing something! Either you haven't visited <stopovers>, or you left the freighters behind.`
+	on complete
+		"Syndicate Convoy" ++
+		payment 500000
+		dialog
+			`A Syndicated Systems representative greets you when you arrive at <planet> with the freighters. He hands you <payment> and thanks you for helping the Syndicate reach new markets. "You're helping bring prosperity to this corner of the galaxy. We'll make sure to contact you in the future should we need your help again."`
+	
+	npc accompany save
+		government "Merchant"
+		personality 
+			timid escort
+			confusion 40
+			names "civilian"
+			variant
+				"freighter" 4
+				
+	npc 
+		government "Pirate"
+		personality 
+			heroic nemesis staying
+			confusion 20
+		system "???" #need to pick a system for this...
+		fleet 
+			names "pirate"
+			variant 
+				"osprey" 2
+
+
+mission "Syndicate Colonization 6c"
+	minor 
+	name "Syndicated Systems to New Wales" #this is a duplicate of the above mission, check the flowchart when wifi is back to see what needs to change
+	description `Escort a several freighters to <stopovers> where they will pick up materials to set up a Syndicate outfitter at <destination>. Payment is <payment>.`
+	source 
+		government "Syndicate" 
+		near "Foundry" 3
+	stopover "Foundry" #should this stopover at a different planet/system?
+	deadline
+	destination New Wales
+	to offer
+		has "Syndicate Colonization 5: done"
+		has "event: war begins"
+		"combat rating" > 65
+		random < 40 + "Syndicate Convoy" * 5
+	on offer
+		conversation
+			`You are approached by a man in a Syndicated Systems uniform who asks if you'd be willing to help set up a shipyard on <destination> by escorting several freighters full of materials. "This shipment is a moderate sized convoy so we expect you to encounter some pirates on the way," he says.`
+			choice
+				`	"Sure, I can do that."`
+					accept
+				`	"Sorry, I can't help you right now."`
+					decline
+	
+	on stopover
+		dialog `You arrive at the pickup location on <stopovers> and the freighters are loaded up. You get read to head to <destination>.`
+	on visit
+		dialog `You have reached <planet>, but you're missing something! Either you haven't visited <stopovers>, or you left the freighters behind.`
+	on complete
+		"Syndicate Convoy" ++
+		payment 500000
+		dialog
+			`A Syndicated Systems representative greets you when you arrive at <planet> with the freighters. He hands you <payment> and thanks you for helping the Syndicate reach new markets. "You're helping bring prosperity to this corner of the galaxy. We'll make sure to contact you in the future should we need your help again."`
+	
+	npc accompany save
+		government "Merchant"
+		personality 
+			timid escort
+			confusion 60
+		fleet 
+			names "civilian"
+			variant
+				"freighter" 6
+				
+	npc 
+		government "Pirate"
+		personality 
+			heroic plunders staying
+			confusion 20
+		system "???" #need to pick a system for this...
+		fleet "Large Southern Pirates"
+		
+
+
+event "Add outfitters to Tundra"
+	planet Tundra
+		add outfitter "Syndicate Basics" 10
+
+event "Add outfitters to New China"
+	planet New China
+		add outfitter "Syndicate Assistance" 50
+
+event "Add outfitters to New Wales"
+	planet New Wales
+		add outfitter "Syndicate Basics" 10
+
+mission "Syndicate Colonization 7" #should the presence of pirates in systems FL will fly through give them the opportunity to question someone from the Syndicate about how the pirates knew? And maybe that could be a lead into a plot about nukes to pirates?
+	name "Convoy to Tundra, New China, and New Wales"
+	description "Escort a large convoy to Tundra, New Wales, and New China to finalize their setup of Syndicated Systems outfitters. Then bring the convoy back to <destination>."
+	landing
+	source
+		government "Syndicate"
+	destination 
+		government "Syndicate"
+		attributes "spaceport" "core"
+	stopover "New Wales"
+	stopover "New China"
+	stopover "Tundra"
+	to offer 
+		has "Syndicate Colonization 6a: done"
+		has "Syndicate Colonization 6b: done"
+		has "Syndicate Colonization 6c: done"
+		#maybe some amount of secret syndicate missions too?
+	on offer
+		conversation
+		
+	on complete 
+		conversation 
+	
+	npc
+		government "Pirate"
+		personality 
+			nemesis plunders staying
+			confusion 20
+		system "Menkent"
+		fleet
+			names "pirate"
+			variant
+		
+	npc
+		government "Pirate"
+		personality
+			nemesis plunders staying
+			confusion 20
+		system "Phecda"
+		fleet
+			names "pirate"
+			variant
+	
+	npc 
+		government "Pirate"
+		personality
+			nemesis plunders staying
+			confusion 20
+		system "Denebola"
+		fleet
+			names "pirate"
+			variant
+			
+	npc 
+		government "Pirate"
+		personality
+			nemesis plunders staying
+			confusion 20
+		system "Arcturus"
+		fleet
+			names "pirate"
+			variant 
+			
+			
+	
+	npc accompany save
+		government "Syndicate"
+		personality
+			timid escort
+			confusion 40
+		fleet #civilians to Tundra
+			to despawn
+				has "Syndicate Colonization 7a: Convoy to Tundra: offered"
+			names "civilian"
+			variant
+				#list of ships
+		
+		fleet #civilians to New Wales
+			to despawn
+				has "Syndicate Colonization 7a: Convoy to New Wales: offered"
+			names "civilian"
+			variant
+			
+		fleet #civilians to New China
+			to despawn
+				has "Syndicate Colonization 7a: Convoy to New China: offered"
+#make separate fleets for civlian and security ships so that they can have different personalities
+	npc accompany #security forces
+		government "Syndicate"
+		personality
+			heroic escort
+			confusion 20
+		
+		fleet #security forces to Tundra
+			names "civilian"
+			variant 
+				"quicksilver" 4
+			to despawn
+				has "Syndicate Colonization 7a: Convoy to Tundra: offered"
+		
+		fleet #security forces to New Wales
+			names "civilian"
+			variant 
+				"manta" 2
+			to despawn
+				has "Syndicate Colonization 7a: Convoy to New Wales: offered"
+			
+		fleet #security forces to New China
+			names "civilian"
+			variant
+				"splinter" 2
+			to despawn
+				has "Syndicate Colonization 7a: Convoy to New China: offered"
+			
+			
+			variant
+				"freighter"
+				"bulk freighter"
+				"container transport" #this should really only be for planets that can handle it
+				"wasp"
+				"quicksilver"
+				"manta"
+				"splinter"
+				#should be some bigger freighters.. also, introduce the 'class C' freighter? if so, add some dialog about it
+
+#stopover at Tundra, New China, and New Wales to finish setting up the Syndicate Outfitter basics 
+#this may require sub-missions to get the different parts of the convoy to despawn appropriately
+
+
+mission "Syndicate Colonization 7a: Convoy to Tundra"
+	invisible
+	landing
+	source
+		planet "Tundra"
+	to offer
+		has "Syndicate Colonization 7: acitve"
+	on offer
+		event "Add outfitters to Tundra"
+		dialog
+			`"You've safely escorted the last things that Tundra will need to set up a Syndicated Systems outfitter. When you've visited all of the planets, return to Syndicate space."`
+		decline
+	
+		
+mission "Syndicate Colonization 7b: Convoy to New China"
+	invisible
+	landing
+	source 
+		planet "New China"
+	to offer
+		has "Syndicate Colonization 7: active"
+	on offer
+		event "Add outfitters to New China"
+		decline
+	
+mission "Syndicate Colonization 7c: Convoy to New Wales"
+	invisible 
+	landing
+	source
+		planet "New Wales"
+	to offer
+		has "Syndicate Colonization 7: acitve"
+	on offer
+		event "Add outfitters to New Wales"
+		decline
+
+
+mission "Syndicate Colonization 8"
+	name "Bribing even more pirates"
+	minor
+#head to (place where Korath might reasonably be) to bribe pirates for the Syndicate
+	to offer 
+		has "Syndicate Colonization 7: done"
+	source 
+		government "Syndicate"
+	destination #whatever planet I decided 
+	stopover #korathable system
+	payment 500000
+	on enter <stopover>
+		dialog `	When you enter <stopovers> you see several pirate ships fighting two ships that look nothing like you've ever seen before. Despite being vastly outnumbered, these strange ships seem to be holdling their own for now.`
+		
+		
+mission "Korath attack on <system>"
+	invisible
+#not sure if this needs to be a separate mission to get the dialog on entering the system...
+
+
+mission "Syndicate Colonization repeating" #should this just be added to the job board for (one job per planet) added after completion of the 2nd trip to that planet?
+	name "Follow up shipment to <destination>"
+	description "Bring additional supplies to a Syndicate outfitter or shipyard at <destination>."
+	job
+	repeat
+	payment 5000 5000
+	cargo "Syndicate Supplies" 25 100
+	#repeating mission to places where FL has already been to set up Syndicated Systems or (eventually) shipyards
+
+
+################ STANDALONE MISSIONS ####################
+
+mission "Convoy to Tarazed"
+	name "Convoy to Tarazed"
+	source 
+		government "Syndicate"
+	to offer
+		has "Syndicate Colonization 4: done"
+		has "event: war begins" # + I'm sure other stuff to make sure this is offered late enough...
+		has combat rating > 100
+#the 'other side' of the FW FL mission to pick up stuff from Tarazed
+	description "Participate in an escort convoy of Syndicate supplies to Tarazed to be sold on to the Free Worlds."
+	payment 500000
+	on offer
+		conversation
+			`As you walk through the spaceport, a man in a Syndicate uniform calls out to you. "Captain <last>!"`
+			choice
+				`	(stop and let him approach.)`
+				`	(ignore him)`
+					decline
+			`	"Captain <last>, I'm glad I caught up to you. I work for Kjell Raskob, the Director of Shipping for the Syndicate. We are hoping you could help us with a caravan of supplies bound for Tarazed as part of a deal with the Free Worlds. We thought your other experience with escorting convoys like this would make you a good fit for this mission. What do you say?"`
+	#should Kjell Raskob just be whoever Alondo makes a deal with (Samuel Remington)? That probably works better for the story... Or maybe this Syndicate employee should just name drop Remington (Head of Public Relations)
+			choice
+				`	"Tell me more."`
+				`	"Sorry, I'm busy right now."`
+					decline
+			`	The man has you follow him to a logistics office. "The Syndicate has signed a deal with the Free worlds to send weapons and ship construction supplies to Tarazed. Even though we're trying to keep this under wraps, such a large caravan is bound to attrack attention and it is essential that this cargo makes it to Tarazed. We'll be sending you with a Vanguard and a few other trusted captains should you accept And of course you'll be compensated appropriately. Payment for this job is <payment>."`
+			choice
+				`	"Sounds good. I'll get my ship ready."`
+					accept
+				`	"Sorry, that's too risky for me."`
+					decline
+	on complete
+		
+		
+				
+mission "Supplies to Tundra" 
+	name "Refinery Supplies to Tundra"
+	description "The Syndicate has agreed to supply the Free Worlds with supplies to repair a duterium refinery. Bring these supplies to Winter and meet with a Free Worlds representative without being noticed by the Republic."
+	source
+		government "Syndicate"
+	landing #is this necessary?
+	deadline #What should the deadline be?
+	cargo "refinery equipment" 10
+	passengers 5
+	blocked "You need 10 tons of cargo space for the <cargo> and 5 bunks for the passengers. You'll need to sell some cargo or abort another mission to make room."
+	payment 250000
+	to offer
+		has "event: war begins" # + some delay to get this to the right time
+	on offer
+		
+	on complete
+		conversation #not dialog?
+			`You land at an abandonded settlement a thousand kilometers from <destination>'s main spaceport. It's an old oil field that ran dry a few decades ago, and only a few of the landing pads are still usable. You and the other Syndicate employees quickly load the cargo onto a Free Worlds ship, and say, "Now, take off quickly before the Navy sees us doing business with a ship flying Free Worlds colors."`
+
+
+################	  SYNDICATE SURVEILLANCE	 ################
+
+mission "Prewar Surveillance 0"
+	name "Initial Surveilance"
+	description "Visit key spaceports throughout the Galactic South and listen to conversations people are having, then report back to <origin>."
+	source
+		government "Syndicate"
+	to offer
+		has
+			not "chosen sides"
+	on offer
+		conversation
+			`As you walk through the spaceport on <origin> a man in Syndicate uniform approaches you. "Hello Captain, do you often travel throughout the Republic?"`
+			choice
+				`"I do."`
+				`"Sorry, no."`
+					defer
+			`"Very good. If yoyu'd like to make some extra money during your travels, could you visit some spaceports for me, just listen to what people on the street are talking about, and then come back here to tell me what you've heard?"`
+			choice
+				`"Sure. Can you mark the specific planets for me?"`
+					goto willing
+				`"I'm interested, but can you tell me more first?"`
+					goto curious
+				`"No, sorry, I'm not interested."`
+					defer
+			label willing
+				`"Of course," says the man. "When you return, payment will be <payment>."`
+					accept
+			label curious
+				`"Totally understandable," he replies. "The Syndicate does its best to guess at market trends to ensure long run stability and profit. We have many ways of gathering this data, and asking captains to report what they're hearing in spaceports is one of them. If you help us with this, payment will be <payment>."`
+			choice
+			
+
+#########################################################################
+
+
+
+
+
+
+
+
+
+
+ 
