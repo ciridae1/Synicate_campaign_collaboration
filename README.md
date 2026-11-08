@@ -33,7 +33,8 @@ I want people to be able to read through this document and then be able to start
   - I think the main thing here is that I tried to break down what happens in the FW campaign into ‘themes’ or time periods (like the several scouting missions FL is asked to do) and how many of those missions there are (see column I– I didn’t quite finish this process but the first several rows detail what I was thinking about)
 
 - I made a flow chart to sort of storyboard how the campaign would progress.
- - There's a couple different ones in the "story flowcharts" folder. Unfortunately the flowchart editor I found in spring '25 makes it so you need to download the files and then view them in the web or desktop app. I've linked the github for that editor in the story flowcharts folder
+  
+  - There's a couple different ones in the "story flowcharts" folder. Unfortunately the flowchart editor I found in spring '25 makes it so you need to download the files and then view them in the web or desktop app. I've linked the github for that editor in the story flowcharts folder
 
 - At this point my desire to work on it falls off, to my knowledge there’s no additional work on a SC until…
 
