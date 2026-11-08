@@ -30,13 +30,12 @@ I want people to be able to read through this document and then be able to start
  
 - I wrote up my ideas on a google spreadsheet (which is either here as a downloadable Excel file [ https://github.com/ciridae1/Synicate_campaign_collaboration/blob/48aa0e39815e31d62d5fc8b9b1f9f526bf49a28f/Syndicate%20Campaign%20notes_ideas.xlsx ] or a view only GoogleSheet [ https://docs.google.com/spreadsheets/d/1dU0zUaPBh_mUoUn525stCdMEkxihL3rKFQghHgpIt1M/edit?usp=sharing ]
 
- - I think the main thing here is that I tried to break down what happens in the FW campaign into ‘themes’ or time periods (like the several scouting missions FL is asked to do) and how many of those missions there are (see column I– I didn’t quite finish this process but the first several rows detail what I was thinking about)
+  - I think the main thing here is that I tried to break down what happens in the FW campaign into ‘themes’ or time periods (like the several scouting missions FL is asked to do) and how many of those missions there are (see column I– I didn’t quite finish this process but the first several rows detail what I was thinking about)
 
 - I made a flow chart to sort of storyboard how the campaign would progress.
-
-- Here’s a screenshot of part of that flow chart while I try and find the whole thing on my computer https://drive.google.com/file/d/1Pcicf028F9mShwLeDXaY2vjAYmGoQASj/view?usp=sharing 
+ - There's a couple different ones in the "story flowcharts" folder. Unfortunately the flowchart editor I found in spring '25 makes it so you need to download the files and then view them in the web or desktop app. I've linked the github for that editor in the story flowcharts folder
 
 - At this point my desire to work on it falls off, to my knowledge there’s no additional work on a SC until…
 
-- Just kidding, I can’t find the messages of the other person who started working on it after me… but it was around November 2025 since that’s when I was asked to share what I’d made
+- Just kidding, I can’t find the messages of the other person who started working on it after me… but it was around November 2025 since that’s when I was asked to share what I’d made. I'll edit this section should I learn who that was and what they worked on (assuming they're okay with it, I'd also like to put there work in this repository)
 
