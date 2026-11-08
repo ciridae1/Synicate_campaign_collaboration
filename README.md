@@ -28,7 +28,7 @@ I want people to be able to read through this document and then be able to start
  
  - What types of missions and jobs might be available to someone working for the Syndicate?
  
-- I wrote up my ideas on a google spreadsheet (which is either here as a view only GoogleSheet or downloadable as an Excel file [ https://docs.google.com/spreadsheets/d/1dU0zUaPBh_mUoUn525stCdMEkxihL3rKFQghHgpIt1M/edit?usp=sharing ]
+- I wrote up my ideas on a google spreadsheet (which is either here as a downloadable Excel file [ https://github.com/ciridae1/Synicate_campaign_collaboration/blob/48aa0e39815e31d62d5fc8b9b1f9f526bf49a28f/Syndicate%20Campaign%20notes_ideas.xlsx ] or a view only GoogleSheet [ https://docs.google.com/spreadsheets/d/1dU0zUaPBh_mUoUn525stCdMEkxihL3rKFQghHgpIt1M/edit?usp=sharing ]
 
 - I think the main thing here is that I tried to break down what happens in the FW campaign into ‘themes’ or time periods (like the several scouting missions FL is asked to do) and how many of those missions there are (see column I– I didn’t quite finish this process but the first several rows detail what I was thinking about)
 
