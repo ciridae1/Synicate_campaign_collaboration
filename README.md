@@ -4,6 +4,7 @@ For collaborating on the ES Syndicate Campaign
 Please forgive the what will be I'm sure many formatting errors as I have no idea what I'm doing. xD
 
 The goal of this document
+
 I want people to be able to read through this document and then be able to start contributing to the Syndicate Campaign in a way that they want that is also hopefully cohesive with this vision. Why should I get to direct the vision for the Syndicate Campaign? Well, if you want to start from scratch you can. I did talk to some actual devs about my ideas when I first started working on this so I had at least a veneer of approval.
 The story (of the SC) so far
 -Some time ago (looks like 7 years ago), Derpy started work on the Syndicate campaign [ https://github.com/Amazinite/ES-Syndicate-Campaign ]
