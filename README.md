@@ -1,4 +1,4 @@
-# Synicate_campaign_collaboration
+# Synicate campaign collaboration
 For collaborating on the ES Syndicate Campaign
 
 Please forgive the what will be I'm sure many formatting errors as I have no idea what I'm doing. xD
